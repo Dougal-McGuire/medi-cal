@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI Calculator - MediCal</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">MediCal</h1>
+            <nav class="nav">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/calculators/bmi" class="nav-link">BMI Calculator</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <section style="padding: 3rem 0;">
+                <h1 style="text-align: center; margin-bottom: 2rem;">BMI Calculator</h1>
+                
+                <div style="max-width: 600px; margin: 0 auto;">
+                    <form id="bmiForm">
+                        <div class="form-group">
+                            <label for="unit">Unit System</label>
+                            <select id="unit" name="unit">
+                                <option value="metric">Metric (kg, m)</option>
+                                <option value="imperial">Imperial (lbs, in)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="weight" id="weightLabel">Weight (kg)</label>
+                            <input type="number" id="weight" name="weight" step="0.1" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="height" id="heightLabel">Height (m)</label>
+                            <input type="number" id="height" name="height" step="0.01" required>
+                        </div>
+
+                        <button type="submit" class="btn" style="width: 100%;">Calculate BMI</button>
+                    </form>
+
+                    <div id="result" class="result-card" style="display: none;">
+                        <div class="result-value" id="bmiValue"></div>
+                        <div class="result-category" id="bmiCategory"></div>
+                        <div id="bmiInput"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 MediCal. For educational purposes only.</p>
+        </div>
+    </footer>
+
+    <script src="/js/bmi-calculator.js"></script>
+</body>
+</html>
