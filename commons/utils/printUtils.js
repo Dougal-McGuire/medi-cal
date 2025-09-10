@@ -31,66 +31,70 @@ export function generatePrintableHTML({
     <style>
       @media print {
         @page {
-          margin: 2cm;
+          margin: 1.5cm;
           size: A4;
         }
       }
       
       body {
         font-family: Arial, sans-serif;
-        line-height: 1.6;
+        line-height: 1.4;
         color: #333;
         max-width: 800px;
         margin: 0 auto;
-        padding: 20px;
+        padding: 10px;
+        font-size: 14px;
       }
       
       .print-header {
         text-align: center;
         border-bottom: 2px solid #0066cc;
-        padding-bottom: 20px;
-        margin-bottom: 30px;
+        padding-bottom: 12px;
+        margin-bottom: 15px;
       }
       
       .print-header h1 {
         color: #0066cc;
         margin: 0;
-        font-size: 28px;
+        font-size: 24px;
       }
       
       .print-header .subtitle {
         color: #666;
-        margin: 5px 0;
-        font-size: 16px;
+        margin: 3px 0;
+        font-size: 14px;
       }
       
       .patient-info {
         background: #f8f9fa;
-        padding: 15px;
+        padding: 10px;
         border-radius: 5px;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
+        font-size: 13px;
       }
       
       .patient-info h3 {
-        margin: 0 0 10px 0;
+        margin: 0 0 8px 0;
         color: #0066cc;
+        font-size: 16px;
       }
       
       .result-section {
-        margin-bottom: 30px;
+        margin-bottom: 15px;
+        text-align: center;
       }
       
       .result-value {
-        font-size: 36px;
+        font-size: 28px;
         font-weight: bold;
         color: #0066cc;
-        margin: 10px 0;
+        margin: 8px 0;
       }
       
       .result-category {
-        font-size: 24px;
+        font-size: 18px;
         font-weight: 500;
-        margin: 10px 0;
+        margin: 8px 0;
       }
       
       .category-normal { color: #28a745; }
@@ -98,65 +102,69 @@ export function generatePrintableHTML({
       .category-overweight { color: #ffc107; }
       .category-obese { color: #dc3545; }
       
+      .content-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 15px;
+      }
+      
       .input-section,
       .formula-section,
       .interpretation-section {
-        margin-bottom: 20px;
-        padding: 15px;
+        padding: 10px;
         border: 1px solid #ddd;
         border-radius: 5px;
+        font-size: 13px;
       }
       
       .section-title {
         font-weight: bold;
         color: #0066cc;
-        margin-bottom: 10px;
-        font-size: 18px;
+        margin-bottom: 8px;
+        font-size: 14px;
       }
       
       .input-item,
       .range-item {
-        margin: 5px 0;
+        margin: 3px 0;
         display: flex;
         justify-content: space-between;
+        font-size: 12px;
       }
       
       .formula-description {
         font-style: italic;
         color: #666;
         margin-top: 5px;
-      }
-      
-      .disclaimer {
-        background: #fff3cd;
-        border: 1px solid #ffeaa7;
-        padding: 15px;
-        border-radius: 5px;
-        margin-top: 30px;
-        font-size: 14px;
-      }
-      
-      .disclaimer strong {
-        color: #856404;
+        font-size: 12px;
       }
       
       .print-footer {
         text-align: center;
-        margin-top: 40px;
-        padding-top: 20px;
+        margin-top: 20px;
+        padding-top: 15px;
         border-top: 1px solid #ddd;
         color: #666;
-        font-size: 14px;
+        font-size: 12px;
       }
       
       .ranges-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        margin-top: 10px;
+        gap: 5px;
+        margin-top: 8px;
+      }
+      
+      .ranges-grid .range-item {
+        font-size: 11px;
       }
       
       @media (max-width: 600px) {
+        .content-grid {
+          grid-template-columns: 1fr;
+        }
+        
         .ranges-grid {
           grid-template-columns: 1fr;
         }
@@ -201,18 +209,15 @@ export function generatePrintableHTML({
       
       ${generateResultSection(result, calculatorName)}
       
-      ${generateInputSection(inputs)}
-      
-      ${generateFormulaSection(result.formula)}
-      
-      ${generateInterpretationSection(result.interpretation)}
-      
-      ${generateAdditionalInfoSection(additionalInfo)}
-      
-      <div class="disclaimer">
-        <strong>Medical Disclaimer:</strong> This calculator is for educational and informational purposes only. 
-        The results should not be used as a substitute for professional medical advice, diagnosis, or treatment. 
-        Always consult with qualified healthcare providers for medical decisions and personalized health assessments.
+      <div class="content-grid">
+        <div class="left-column">
+          ${generateInputSection(inputs)}
+          ${generateAdditionalInfoSection(additionalInfo)}
+        </div>
+        <div class="right-column">
+          ${generateFormulaSection(result.formula)}
+          ${generateInterpretationSection(result.interpretation)}
+        </div>
       </div>
       
       <div class="print-footer">
@@ -320,11 +325,14 @@ function generateAdditionalInfoSection(additionalInfo) {
   if (!additionalInfo || Object.keys(additionalInfo).length === 0) return '';
   
   const infoItems = Object.entries(additionalInfo)
+    .filter(([key, value]) => value !== undefined && value !== null && value !== '')
     .map(([key, value]) => {
       const label = formatInputLabel(key);
       return `<div class="input-item"><span>${label}:</span><span>${value}</span></div>`;
     })
     .join('');
+
+  if (!infoItems) return '';
 
   return `
     <div class="input-section">
@@ -343,10 +351,12 @@ function formatInputLabel(key) {
     height: 'Height',
     heightMeters: 'Height (meters)',
     formula: 'Formula Used',
-    unit: 'Unit System'
+    unit: 'Unit System',
+    calculationDate: 'Calculation Date',
+    formulaUsed: 'Formula Used'
   };
   
-  return labelMap[key] || key.charAt(0).toUpperCase() + key.slice(1);
+  return labelMap[key] || key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1');
 }
 
 /**
