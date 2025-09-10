@@ -1,8 +1,1 @@
-{
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "functions": {
-    "api/**/*.js": { "runtime": "nodejs20.x" }
-  },
-  "buildCommand": "npm ci",
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD ."
-}
+{}
