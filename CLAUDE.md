@@ -6,14 +6,16 @@ This file contains Claude-specific commands and development workflows for the Me
 
 ### Local Development
 ```bash
-# Start development server
+# Start development server (standalone, no Vercel CLI needed)
 npm run dev
 
-# Test locally (alternative)
-node test-server.js  # if created for testing
+# Alternative start command
+npm start
 
 # Install dependencies
 npm ci
+
+# Server automatically starts at http://localhost:3000
 ```
 
 ### Deployment
@@ -32,17 +34,21 @@ vercel --token $VERCEL_TOKEN --prod --yes
 
 ### Testing
 ```bash
-# Test API endpoints
+# Test production API endpoints
 curl https://medi-cal-cyan.vercel.app/api/
 curl -X POST -H "Content-Type: application/json" \
   -d '{"weight":70,"height":1.75,"unit":"metric"}' \
   https://medi-cal-cyan.vercel.app/api/calculators/bmi
 
-# Test local endpoints (if test server running)
+# Test local endpoints (requires npm run dev first)
 curl http://localhost:3000/api/
 curl -X POST -H "Content-Type: application/json" \
   -d '{"weight":70,"height":1.75,"unit":"metric"}' \
   http://localhost:3000/api/calculators/bmi
+
+# Local development URLs:
+# Frontend: http://localhost:3000/
+# BMI Calculator: http://localhost:3000/bmi.html
 ```
 
 ### Git Operations

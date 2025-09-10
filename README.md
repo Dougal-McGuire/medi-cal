@@ -76,9 +76,13 @@ nvm use
 # Install dependencies
 npm ci
 
-# Start local development (requires Vercel CLI and login)
-vercel login  # One-time setup
+# Start local development server (no Vercel CLI required!)
 npm run dev
+
+# Server runs at http://localhost:3000
+# - Frontend: http://localhost:3000/
+# - BMI Calculator: http://localhost:3000/bmi.html
+# - API: http://localhost:3000/api/
 ```
 
 ### API Testing
