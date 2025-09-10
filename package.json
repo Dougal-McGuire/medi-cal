@@ -4,16 +4,28 @@
   "description": "Medical calculator tools collection with modern UI",
   "private": true,
   "type": "module",
-  "engines": { "node": "20.x" },
+  "engines": {
+    "node": "20.x"
+  },
   "packageManager": "npm@10.8.2",
   "scripts": {
-    "dev": "node dev-server.js",
-    "start": "node dev-server.js",
-    "build": "echo \"no build step\"",
+    "dev": "next dev --turbo",
+    "build": "next build",
+    "start": "next start",
     "lint": "eslint .",
     "test": "node --test"
   },
-  "keywords": ["medical", "calculator", "healthcare", "tools"],
+  "keywords": [
+    "medical",
+    "calculator",
+    "healthcare",
+    "tools"
+  ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "next": "15.5.2",
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
+  }
 }
