@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import PrintButton from '../../commons/components/PrintButton';
 
 const BMI_FORMULAS = [
   { key: 'traditional', name: 'Traditional Quetelet Index', description: 'Standard BMI calculation (weight/height²)' },
@@ -200,6 +201,23 @@ export default function BMICalculator() {
                   
                   <div style={{ fontSize: '0.875rem', color: '#666', marginTop: '1rem' }}>
                     Input: {result.input.weight} kg, {result.input.height} cm ({result.input.heightMeters} m)
+                  </div>
+                  
+                  <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+                    <PrintButton
+                      calculatorName="BMI Calculator"
+                      result={result}
+                      inputs={{
+                        weight: result.input.weight,
+                        height: result.input.height,
+                        heightMeters: result.input.heightMeters
+                      }}
+                      additionalInfo={{
+                        calculationDate: new Date().toLocaleDateString(),
+                        formulaUsed: result.formula.name
+                      }}
+                      variant="outline"
+                    />
                   </div>
                 </div>
               )}
