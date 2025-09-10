@@ -76,7 +76,8 @@ nvm use
 # Install dependencies
 npm ci
 
-# Start local development (requires Vercel CLI)
+# Start local development (requires Vercel CLI and login)
+vercel login  # One-time setup
 npm run dev
 ```
 
@@ -141,9 +142,11 @@ medi-cal/
 - RESTful API design
 
 ### Deployment
-- Automatic deployment via GitHub integration
-- Environment variables managed through Vercel dashboard
-- Production builds use `npm ci` for deterministic installs
+- **Automatic deployment**: Pushes to `main` branch automatically deploy to production
+- **GitHub Integration**: Connected to https://github.com/Dougal-McGuire/medi-cal
+- **Production URL**: https://medi-cal-cyan.vercel.app (auto-updates on push)
+- **Environment variables**: Managed through Vercel dashboard
+- **Build process**: Uses `npm ci` for deterministic installs
 
 ### Adding New Calculators
 
@@ -178,8 +181,11 @@ MIT License - See LICENSE file for details.
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/new-calculator`
 3. Make changes following the project structure
-4. Test locally before committing
-5. Submit a pull request
+4. Test locally before committing: `npm run dev`
+5. Commit and push to your branch
+6. Submit a pull request
+
+**Automatic Deployment**: Once merged to `main`, changes automatically deploy to production at https://medi-cal-cyan.vercel.app
 
 ## ⚠️ Disclaimer
 

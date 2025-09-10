@@ -18,10 +18,15 @@ npm ci
 
 ### Deployment
 ```bash
-# Deploy to Vercel
+# Automatic deployment via GitHub integration
+git add .
+git commit -m "Your changes"
+git push  # Automatically deploys to production
+
+# Manual deployment (if needed)
 vercel --prod
 
-# Deploy with token
+# Deploy with token (if needed)
 vercel --token $VERCEL_TOKEN --prod --yes
 ```
 
@@ -264,12 +269,14 @@ curl -X POST \
 ## 🔄 Update Workflow
 
 1. Make changes to code
-2. Test locally if possible
+2. Test locally if possible: `npm run dev`
 3. Commit with proper message format
-4. Push to GitHub
-5. Deploy to Vercel
+4. Push to GitHub: `git push`
+5. **Automatic deployment** to Vercel (triggered by push)
 6. Test production endpoints
 7. Update documentation if needed
+
+**Note**: Deployment is now automatic - pushing to `main` branch automatically deploys to production!
 
 ## 💡 Development Tips
 
