@@ -75,10 +75,10 @@ The project uses tokens from `.env` file:
 ### Node Version Management
 ```bash
 # Use correct Node version
-nvm use  # Reads from .nvmrc (Node 20)
+nvm use  # Reads from .nvmrc (Node 22)
 
 # Check versions
-node -v  # Should be 20.x
+node -v  # Should be 22.x
 npm -v   # Should be 10.x+
 ```
 
