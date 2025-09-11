@@ -81,11 +81,11 @@ The Body Mass Index (BMI) calculator is a medical tool used to assess whether an
 **Use Case:** Simplified interpretation with dimensionless result
 **Characteristics:** Values <0.74 (underweight), 0.74-1.0 (normal), >1.0 (overweight), >1.2 (obese)
 
-### 4. Reciprocal BMI (ponderal Index)
-**Formula:** `Reciprocal BMI = height(m)³ / weight(kg)`
-**Description:** Alternative index that scales better with height
-**Use Case:** Research applications, better correlation with body fat percentage
-**Characteristics:** Higher values indicate lower body mass relative to height
+### 4. Reciprocal BMI (Ponderal Index)
+**Formula:** `Ponderal Index = weight(kg) / height(m)³`
+**Description:** Alternative index, also known as the Ponderal Index, that scales cubically with height.
+**Use Case:** Research applications, may provide a better correlation with body fat percentage.
+**Characteristics:** In this implementation, higher values indicate higher body mass relative to height. The categories are inverted compared to traditional BMI.
 
 ### 5. Geometric Mean BMI
 **Formula:** `Geometric BMI = weight(kg) / (height(m) × sqrt(height(m)))`

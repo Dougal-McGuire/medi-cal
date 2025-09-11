@@ -58,8 +58,8 @@ const BMI_FORMULAS: Record<string, FormulaConfig> = {
   },
   reciprocal: {
     name: 'Reciprocal BMI (Ponderal Index)',
-    description: 'Height-cubed scaling (height³/weight)',
-    calculate: (weight, heightM) => Math.pow(heightM, 3) / weight
+    description: 'Standard Ponderal Index (weight/height³)',
+    calculate: (weight, heightM) => weight / Math.pow(heightM, 3)
   },
   geometric: {
     name: 'Geometric Mean BMI',
@@ -75,9 +75,9 @@ function getCategory(bmi: number, formula: string): string {
     else if (bmi < 1.2) return 'Overweight';
     else return 'Obese';
   } else if (formula === 'reciprocal') {
-    if (bmi > 0.14) return 'Underweight';
-    else if (bmi > 0.10) return 'Normal weight';
-    else if (bmi > 0.075) return 'Overweight';
+    if (bmi > 14.0) return 'Underweight';
+    else if (bmi > 10.0) return 'Normal weight';
+    else if (bmi > 7.5) return 'Overweight';
     else return 'Obese';
   } else {
     // Traditional, Trefethen, Geometric use WHO standards
@@ -98,10 +98,10 @@ function getCategoryRanges(formula: string): CategoryRanges {
     };
   } else if (formula === 'reciprocal') {
     return {
-      underweight: '> 0.14',
-      normal: '0.10 - 0.14',
-      overweight: '0.075 - 0.10',
-      obese: '≤ 0.075'
+      underweight: '> 14.0',
+      normal: '10.1 - 14.0',
+      overweight: '7.6 - 10.0',
+      obese: '≤ 7.5'
     };
   } else {
     return {
