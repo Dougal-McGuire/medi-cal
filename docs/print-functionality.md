@@ -113,12 +113,7 @@ Opens the browser print dialog with the generated content.
 - Calculation metadata
 - Context-specific information
 
-### 8. Medical Disclaimer
-- Standard medical disclaimer text
-- Educational purpose statement
-- Healthcare provider consultation recommendation
-
-### 9. Footer
+### 8. Footer
 - MediCal attribution
 - Report generation timestamp
 - Professional formatting

@@ -103,6 +103,19 @@ export function generatePrintableHTML({
       .category-overweight { color: #ffc107; }
       .category-obese { color: #dc3545; }
       
+      /* CKD Stage colors */
+      .ckd-stage-1, .ckd-stage-2 { color: #28a745; }
+      .ckd-stage-3 { color: #ffc107; }
+      .ckd-stage-4 { color: #fd7e14; }
+      .ckd-stage-5 { color: #dc3545; }
+      
+      /* BSA result info */
+      .result-info {
+        font-size: 16px;
+        color: #6c757d;
+        margin: 8px 0;
+      }
+      
       .content-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -229,29 +242,51 @@ export function generatePrintableHTML({
  * Generate the result section HTML
  */
 function generateResultSection(result: any, calculatorName: string): string {
-  const categoryClass = `category-${result.category.toLowerCase().replace(/\s+/g, '-')}`;
-  
+  let categoryClass = '';
   let resultLabel = 'Result';
-  let resultValue = result.bmi;
+  let resultValue = '';
   let resultUnit = '';
+  let categoryDisplay = '';
   
-  // Handle different result types
-  if (result.formula && result.formula.name) {
-    if (result.formula.name.includes('BMI Prime')) {
-      resultLabel = 'BMI Prime';
-    } else if (result.formula.name.includes('Reciprocal') || result.formula.name.includes('Ponderal')) {
-      resultLabel = 'Ponderal Index';
-    } else {
-      resultLabel = 'BMI';
-      resultUnit = ' kg/m²';
+  // Handle BMI Calculator results
+  if (result.bmi && result.category) {
+    categoryClass = `category-${result.category.toLowerCase().replace(/\s+/g, '-')}`;
+    resultValue = result.bmi;
+    categoryDisplay = `<div class="result-category ${categoryClass}">Category: ${result.category}</div>`;
+    
+    if (result.formula && result.formula.name) {
+      if (result.formula.name.includes('BMI Prime')) {
+        resultLabel = 'BMI Prime';
+      } else if (result.formula.name.includes('Reciprocal') || result.formula.name.includes('Ponderal')) {
+        resultLabel = 'Ponderal Index';
+      } else {
+        resultLabel = 'BMI';
+        resultUnit = ' kg/m²';
+      }
     }
+  }
+  // Handle BSA Calculator results
+  else if (result.bsa) {
+    resultLabel = 'BSA';
+    resultValue = result.bsa;
+    resultUnit = ' m²';
+    categoryDisplay = '<div class="result-info">Body Surface Area calculated</div>';
+  }
+  // Handle Creatinine Calculator results
+  else if (result.egfr && result.interpretation && result.interpretation.ckdStage) {
+    resultLabel = result.units === 'mL/min' ? 'CrCl' : 'eGFR';
+    resultValue = result.egfr;
+    resultUnit = ` ${result.units}`;
+    const stage = result.interpretation.ckdStage;
+    const stageClass = `ckd-stage-${stage.stage}`;
+    categoryDisplay = `<div class="result-category ${stageClass}">${stage.description}</div>`;
   }
   
   return `
     <div class="result-section">
       <div class="section-title">${calculatorName} Results</div>
       <div class="result-value">${resultLabel}: ${resultValue}${resultUnit}</div>
-      <div class="result-category ${categoryClass}">Category: ${result.category}</div>
+      ${categoryDisplay}
     </div>
   `;
 }

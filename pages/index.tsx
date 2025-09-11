@@ -20,6 +20,8 @@ export default function Home() {
             <nav className="flex space-x-8">
               <Link href="/" className="text-foreground hover:text-primary transition-colors">{STRINGS.NAV_HOME}</Link>
               <Link href="/calculators/bmi" className="text-foreground hover:text-primary transition-colors">{STRINGS.NAV_BMI_CALCULATOR}</Link>
+              <Link href="/calculators/bsa" className="text-foreground hover:text-primary transition-colors">BSA Calculator</Link>
+              <Link href="/calculators/creatinine" className="text-foreground hover:text-primary transition-colors">Creatinine Calculator</Link>
             </nav>
           </div>
         </div>
@@ -51,27 +53,31 @@ export default function Home() {
                 </CardContent>
               </Card>
               
-              <Card className="hover:shadow-lg transition-shadow opacity-75">
+              <Card className="hover:shadow-lg transition-shadow">
                 <CardHeader>
-                  <CardTitle className="text-muted-foreground">{STRINGS.BSA_CALCULATOR_TITLE}</CardTitle>
+                  <CardTitle className="text-primary">{STRINGS.BSA_CALCULATOR_TITLE}</CardTitle>
                   <CardDescription>
                     {STRINGS.BSA_CALCULATOR_DESCRIPTION}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button variant="secondary" disabled className="w-full">{STRINGS.COMING_SOON}</Button>
+                  <Link href="/calculators/bsa">
+                    <Button className="w-full">Calculate BSA</Button>
+                  </Link>
                 </CardContent>
               </Card>
               
-              <Card className="hover:shadow-lg transition-shadow opacity-75">
+              <Card className="hover:shadow-lg transition-shadow">
                 <CardHeader>
-                  <CardTitle className="text-muted-foreground">{STRINGS.CREATININE_CALCULATOR_TITLE}</CardTitle>
+                  <CardTitle className="text-primary">{STRINGS.CREATININE_CALCULATOR_TITLE}</CardTitle>
                   <CardDescription>
                     {STRINGS.CREATININE_CALCULATOR_DESCRIPTION}
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button variant="secondary" disabled className="w-full">{STRINGS.COMING_SOON}</Button>
+                  <Link href="/calculators/creatinine">
+                    <Button className="w-full">Calculate eGFR</Button>
+                  </Link>
                 </CardContent>
               </Card>
             </div>

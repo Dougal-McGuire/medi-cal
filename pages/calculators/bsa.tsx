@@ -9,21 +9,21 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import { BMIFormSchema, type BMIFormData } from '@/lib/schemas';
+import { BSAFormSchema, type BSAFormData } from '@/lib/schemas';
 import { STRINGS } from '@/resources/strings';
-import type { BMIFormula, BMIResult } from '@/types/calculator';
+import type { BSAFormula, BSAResult } from '@/types/calculator';
 import PrintButton from '../../commons/components/PrintButton';
 
-const BMI_FORMULAS: BMIFormula[] = [
-  { key: 'traditional', name: 'Traditional Quetelet Index', description: 'Standard BMI calculation (weight/height²)' },
-  { key: 'trefethen', name: "Trefethen's New BMI", description: 'Modified BMI that reduces height bias' },
-  { key: 'prime', name: 'BMI Prime', description: 'Ratio-based BMI (Traditional BMI ÷ 25)' },
-  { key: 'reciprocal', name: 'Reciprocal BMI', description: 'Height-cubed scaling (better for tall/short people)' },
-  { key: 'geometric', name: 'Geometric Mean BMI', description: 'Compromise scaling formula' }
+const BSA_FORMULAS: BSAFormula[] = [
+  { key: 'dubois', name: 'Du Bois Formula (1916)', description: 'Most widely used BSA formula, standard medical reference' },
+  { key: 'mosteller', name: 'Mosteller Formula (1987)', description: 'Simplified formula that is easy to calculate mentally' },
+  { key: 'haycock', name: 'Haycock Formula (1978)', description: 'Formula developed specifically for pediatric populations' },
+  { key: 'boyd', name: 'Boyd Formula (1935)', description: 'Complex formula with logarithmic weight scaling' },
+  { key: 'gehan', name: 'Gehan-George Formula (1970)', description: 'Alternative formula with different scaling exponents' }
 ];
 
-export default function BMICalculator() {
-  const [result, setResult] = useState<BMIResult | null>(null);
+export default function BSACalculator() {
+  const [result, setResult] = useState<BSAResult | null>(null);
   const [loading, setLoading] = useState(false);
 
   const {
@@ -32,23 +32,23 @@ export default function BMICalculator() {
     watch,
     setValue,
     formState: { errors }
-  } = useForm<BMIFormData>({
-    resolver: zodResolver(BMIFormSchema),
+  } = useForm<BSAFormData>({
+    resolver: zodResolver(BSAFormSchema),
     defaultValues: {
       weight: '',
       height: '',
-      formula: 'traditional'
+      formula: 'dubois'
     }
   });
 
   const formula = watch('formula');
-  const selectedFormula = BMI_FORMULAS.find(f => f.key === formula);
+  const selectedFormula = BSA_FORMULAS.find(f => f.key === formula);
 
-  const onSubmit = async (data: BMIFormData) => {
+  const onSubmit = async (data: BSAFormData) => {
     setLoading(true);
     
     try {
-      const response = await fetch('/api/calculators/bmi', {
+      const response = await fetch('/api/calculators/bsa', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -68,27 +68,17 @@ export default function BMICalculator() {
         console.error('Error:', responseData.error);
       }
     } catch (error) {
-      console.error('Error calculating BMI:', error);
+      console.error('Error calculating BSA:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const getCategoryColor = (category: string): string => {
-    const colors: Record<string, string> = {
-      'Underweight': 'text-cyan-600',
-      'Normal weight': 'text-green-600', 
-      'Overweight': 'text-yellow-600',
-      'Obese': 'text-red-600'
-    };
-    return colors[category] || 'text-foreground';
-  };
-
   return (
     <>
       <Head>
-        <title>{`BMI Calculator - ${STRINGS.APP_NAME}`}</title>
-        <meta name="description" content="Professional BMI calculator with multiple formulas" />
+        <title>{`BSA Calculator - ${STRINGS.APP_NAME}`}</title>
+        <meta name="description" content="Professional BSA calculator with multiple medical formulas for body surface area calculation" />
         <meta name="viewport" content={STRINGS.VIEWPORT_META} />
       </Head>
 
@@ -102,14 +92,11 @@ export default function BMICalculator() {
               <Link href="/" className="text-muted-foreground hover:text-foreground transition-colors">
                 {STRINGS.NAV_HOME}
               </Link>
-              <Link href="/calculators/bmi" className="text-foreground">
+              <Link href="/calculators/bmi" className="text-muted-foreground hover:text-foreground transition-colors">
                 {STRINGS.NAV_BMI_CALCULATOR}
               </Link>
-              <Link href="/calculators/bsa" className="text-muted-foreground hover:text-foreground transition-colors">
+              <Link href="/calculators/bsa" className="text-foreground">
                 BSA Calculator
-              </Link>
-              <Link href="/calculators/creatinine" className="text-muted-foreground hover:text-foreground transition-colors">
-                Creatinine Calculator
               </Link>
             </nav>
           </div>
@@ -120,9 +107,9 @@ export default function BMICalculator() {
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-2xl mx-auto space-y-8">
             <div className="text-center">
-              <h1 className="text-4xl font-bold mb-4">{STRINGS.BMI_CALCULATOR_TITLE}</h1>
+              <h1 className="text-4xl font-bold mb-4">Body Surface Area Calculator</h1>
               <p className="text-muted-foreground">
-                Calculate Body Mass Index using multiple validated formulas
+                Calculate Body Surface Area using validated medical formulas for clinical applications
               </p>
             </div>
 
@@ -130,7 +117,7 @@ export default function BMICalculator() {
               <CardHeader>
                 <CardTitle>Enter Your Information</CardTitle>
                 <CardDescription>
-                  Enter your weight and height to calculate your BMI using the selected formula.
+                  Enter your weight and height to calculate your BSA using the selected formula.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -172,13 +159,13 @@ export default function BMICalculator() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="formula">BMI Formula</Label>
+                    <Label htmlFor="formula">BSA Formula</Label>
                     <Select value={formula} onValueChange={(value) => setValue('formula', value)}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select a formula" />
                       </SelectTrigger>
                       <SelectContent>
-                        {BMI_FORMULAS.map((f) => (
+                        {BSA_FORMULAS.map((f) => (
                           <SelectItem key={f.key} value={f.key}>
                             {f.name}
                           </SelectItem>
@@ -196,7 +183,7 @@ export default function BMICalculator() {
                   </div>
 
                   <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? 'Calculating...' : 'Calculate BMI'}
+                    {loading ? 'Calculating...' : 'Calculate BSA'}
                   </Button>
                 </form>
               </CardContent>
@@ -205,7 +192,7 @@ export default function BMICalculator() {
             {result && (
               <Card>
                 <CardHeader>
-                  <CardTitle>Your BMI Results</CardTitle>
+                  <CardTitle>Your BSA Results</CardTitle>
                   <CardDescription>
                     Results calculated using {result.formula.name}
                   </CardDescription>
@@ -213,15 +200,10 @@ export default function BMICalculator() {
                 <CardContent className="space-y-6">
                   <div className="text-center space-y-2">
                     <div className="text-4xl font-bold text-primary">
-                      {result.formula.name === 'BMI Prime' ? `BMI Prime: ${result.bmi}` : 
-                       result.formula.name === 'Reciprocal BMI (Ponderal Index)' ? `Ponderal Index: ${result.bmi}` :
-                       `BMI: ${result.bmi}`}
-                      {result.formula.name !== 'BMI Prime' && result.formula.name !== 'Reciprocal BMI (Ponderal Index)' && (
-                        <span className="text-lg text-muted-foreground"> kg/m²</span>
-                      )}
+                      {result.bsa} <span className="text-lg text-muted-foreground">m²</span>
                     </div>
-                    <div className={cn("text-2xl font-semibold", getCategoryColor(result.category))}>
-                      {result.category}
+                    <div className="text-lg text-muted-foreground">
+                      Body Surface Area
                     </div>
                   </div>
                   
@@ -240,30 +222,42 @@ export default function BMICalculator() {
                     
                     <Card>
                       <CardHeader className="pb-3">
-                        <CardTitle className="text-lg">Category Ranges</CardTitle>
+                        <CardTitle className="text-lg">Normal Ranges</CardTitle>
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-1 text-sm">
                           <div className="flex justify-between">
-                            <span className="text-cyan-600">Underweight:</span>
-                            <span>{result.interpretation.ranges.underweight}</span>
+                            <span>Adult Male:</span>
+                            <span>{result.interpretation.normalRanges.adult_male}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-green-600">Normal:</span>
-                            <span>{result.interpretation.ranges.normal}</span>
+                            <span>Adult Female:</span>
+                            <span>{result.interpretation.normalRanges.adult_female}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-yellow-600">Overweight:</span>
-                            <span>{result.interpretation.ranges.overweight}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-red-600">Obese:</span>
-                            <span>{result.interpretation.ranges.obese}</span>
+                            <span>Child:</span>
+                            <span>{result.interpretation.normalRanges.child}</span>
                           </div>
                         </div>
                       </CardContent>
                     </Card>
                   </div>
+
+                  <Card>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg">Clinical Applications</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="text-sm space-y-1">
+                        {result.interpretation.applications.map((application, index) => (
+                          <li key={index} className="flex items-start">
+                            <span className="text-primary mr-2">•</span>
+                            <span>{application}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  </Card>
                   
                   <div className="text-center border-t pt-4">
                     <p className="text-sm text-muted-foreground mb-4">
@@ -271,7 +265,7 @@ export default function BMICalculator() {
                     </p>
                     
                     <PrintButton
-                      calculatorName="BMI Calculator"
+                      calculatorName="BSA Calculator"
                       result={result}
                       inputs={{
                         weight: result.input.weight,
@@ -285,6 +279,7 @@ export default function BMICalculator() {
                       variant="outline"
                     />
                   </div>
+
                 </CardContent>
               </Card>
             )}

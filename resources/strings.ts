@@ -31,7 +31,7 @@ export const STRINGS = {
   COMING_SOON: 'Coming Soon',
   
   // Footer
-  FOOTER_COPYRIGHT: '© 2025 CCDRD AG. For educational purposes only.',
+  FOOTER_COPYRIGHT: '©2025 CCDRD AG. For research only.',
   
   // Meta
   VIEWPORT_META: 'width=device-width, initial-scale=1',
