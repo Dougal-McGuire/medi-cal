@@ -2,7 +2,9 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { Calculator, Home, Activity, Stethoscope } from 'lucide-react'
+import { Home, PersonStanding } from 'lucide-react'
+import { MdMonitorWeight } from 'react-icons/md'
+import NephrologyIcon from '@/components/icons/NephrologyIcon'
 import {
   Sidebar,
   SidebarContent,
@@ -27,19 +29,19 @@ export function AppSidebar() {
     {
       title: STRINGS.NAV_BMI_CALCULATOR,
       url: '/calculators/bmi',
-      icon: Calculator,
+      icon: MdMonitorWeight,
       isActive: router.pathname === '/calculators/bmi'
     },
     {
       title: 'BSA Calculator',
       url: '/calculators/bsa',
-      icon: Activity,
+      icon: PersonStanding,
       isActive: router.pathname === '/calculators/bsa'
     },
     {
       title: 'Creatinine Calculator',
       url: '/calculators/creatinine',
-      icon: Stethoscope,
+      icon: NephrologyIcon,
       isActive: router.pathname === '/calculators/creatinine'
     }
   ]
