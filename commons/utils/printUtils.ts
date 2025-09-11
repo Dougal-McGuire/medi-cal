@@ -44,7 +44,8 @@ export function generatePrintableHTML({
           }
         }
       }
-    </script>`;
+    </script>
+  `;
 
   const patientSection = patientId ? `
     <div class="bg-custom-light-gray p-3 rounded-md mb-4 text-sm print:mb-3">
