@@ -105,7 +105,7 @@ function generateResultSection(result: any, calculatorName: string): string {
   
   // Handle BMI Calculator results
   if (result.bmi && result.category) {
-    const categoryColors = {
+    const categoryColors: Record<string, string> = {
       'normal weight': 'text-green-600',
       'underweight': 'text-cyan-600', 
       'overweight': 'text-yellow-600',
@@ -139,7 +139,7 @@ function generateResultSection(result: any, calculatorName: string): string {
     resultValue = result.egfr;
     resultUnit = ` ${result.units}`;
     const stage = result.interpretation.ckdStage;
-    const stageColors = {
+    const stageColors: Record<number, string> = {
       1: 'text-green-600', 2: 'text-green-600', 3: 'text-yellow-600', 
       4: 'text-orange-500', 5: 'text-red-600'
     };

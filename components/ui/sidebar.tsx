@@ -147,7 +147,7 @@ export function SidebarMenuButton({
   const Component = asChild ? React.Fragment : Button
 
   const buttonProps = asChild ? {} : {
-    variant: isActive ? "secondary" : "ghost",
+    variant: (isActive ? "secondary" : "ghost") as "secondary" | "ghost",
     className: cn(
       "w-full justify-start px-3 py-2 text-left font-normal",
       isActive && "bg-muted",
