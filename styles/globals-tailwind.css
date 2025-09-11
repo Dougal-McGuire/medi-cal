@@ -70,70 +70,67 @@
   }
   
   .print-header {
-    @apply text-center mb-4 pb-2 border-b border-gray-400;
+    @apply text-center border-b-2 border-primary pb-3 mb-4;
   }
   
   .print-header h1 {
-    @apply text-lg font-bold mb-1;
+    @apply text-primary text-2xl font-bold m-0;
   }
   
-  .print-patient-info {
-    @apply grid grid-cols-2 gap-2 mb-4;
+  .print-header .subtitle {
+    @apply text-muted-foreground text-sm mt-1;
   }
   
-  .print-patient-info div {
-    @apply text-sm;
+  .patient-info {
+    @apply bg-muted p-2.5 rounded mb-4 text-sm;
   }
   
-  .print-calculation-result {
-    @apply bg-gray-50 p-3 rounded mb-4;
+  .patient-info h3 {
+    @apply text-primary text-base font-semibold mb-2 m-0;
   }
   
-  .print-calculation-result h3 {
-    @apply font-bold mb-2;
+  .result-section {
+    @apply mb-4 text-center;
   }
   
-  .print-interpretation {
-    @apply mb-4;
+  .result-value {
+    @apply text-2xl font-bold text-primary my-2;
   }
   
-  .print-interpretation h4 {
-    @apply font-semibold mb-1;
+  .result-category {
+    @apply text-lg font-medium my-2;
+  }
+  
+  .category-normal { @apply text-green-600; }
+  .category-underweight { @apply text-cyan-600; }
+  .category-overweight { @apply text-yellow-600; }
+  .category-obese { @apply text-red-600; }
+  
+  .content-grid {
+    @apply grid grid-cols-2 gap-4 mb-4;
+  }
+  
+  .input-section,
+  .formula-section,
+  .interpretation-section {
+    @apply p-2.5 border border-border rounded text-sm;
+  }
+  
+  .section-title {
+    @apply font-semibold text-primary mb-2 text-sm;
+  }
+  
+  .input-item,
+  .range-item {
+    @apply flex justify-between my-1 text-xs;
+  }
+  
+  .formula-description {
+    @apply italic text-muted-foreground mt-1 text-xs;
   }
   
   .print-footer {
-    @apply text-center text-xs text-gray-600 mt-6 pt-2 border-t border-gray-300;
-  }
-  
-  .no-print {
-    @apply hidden;
-  }
-}
-
-/* Legacy medical calculator styles for backwards compatibility */
-@layer components {
-  .medical-card {
-    @apply bg-card text-card-foreground rounded-lg border shadow-sm p-6;
-  }
-  
-  .medical-form-group {
-    @apply space-y-2;
-  }
-  
-  .medical-result {
-    @apply bg-accent text-accent-foreground rounded-lg p-4 mt-4;
-  }
-  
-  .medical-result.success {
-    @apply bg-green-50 text-green-800 border border-green-200;
-  }
-  
-  .medical-result.warning {
-    @apply bg-yellow-50 text-yellow-800 border border-yellow-200;
-  }
-  
-  .medical-result.danger {
-    @apply bg-red-50 text-red-800 border border-red-200;
+    @apply text-center mt-5 pt-4 border-t border-border text-muted-foreground text-xs;
   }
   
   .ranges-grid {

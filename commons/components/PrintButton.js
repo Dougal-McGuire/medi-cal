@@ -12,7 +12,7 @@ import { Printer } from 'lucide-react';
  * @param {Object} props.result - Calculator result object
  * @param {Object} props.inputs - Input values used for calculation
  * @param {Object} props.additionalInfo - Additional information to include in print
- * @param {string} props.variant - Button style variant ('primary', 'secondary', 'outline')
+ * @param {string} props.variant - Button style variant ('default', 'secondary', 'outline')
  * @param {boolean} props.disabled - Whether the button is disabled
  * @param {string} props.className - Additional CSS classes
  */
@@ -58,10 +58,10 @@ export default function PrintButton({
         variant={variant}
         onClick={handlePrintClick}
         disabled={disabled || !result}
-        title={!result ? 'Calculate results first' : 'Print results'}
         className={className}
+        title={!result ? 'Calculate results first' : 'Print results'}
       >
-        <Printer className="h-4 w-4 mr-2" />
+        <Printer className="mr-2 h-4 w-4" />
         Print Results
       </Button>
 
