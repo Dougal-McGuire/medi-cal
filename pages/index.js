@@ -1,5 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
+import { Button } from '../components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 
 export default function Home() {
   return (
@@ -29,24 +31,46 @@ export default function Home() {
         </section>
 
         <section className="calculators">
-          <div className="container">
-            <h2 className="section-title">Available Calculators</h2>
-            <div className="calculator-grid">
-              <div className="calculator-card">
-                <h3>BMI Calculator</h3>
-                <p>Calculate Body Mass Index with metric or imperial units</p>
-                <Link href="/calculators/bmi" className="btn">Calculate BMI</Link>
-              </div>
-              <div className="calculator-card">
-                <h3>BSA Calculator</h3>
-                <p>Body Surface Area calculation (Coming Soon)</p>
-                <button className="btn btn-disabled" disabled>Coming Soon</button>
-              </div>
-              <div className="calculator-card">
-                <h3>Creatinine Clearance</h3>
-                <p>Kidney function assessment (Coming Soon)</p>
-                <button className="btn btn-disabled" disabled>Coming Soon</button>
-              </div>
+          <div className="container max-w-6xl mx-auto">
+            <h2 className="text-center text-2xl font-bold mb-12 text-foreground">Available Calculators</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <Card className="hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <CardTitle className="text-primary">BMI Calculator</CardTitle>
+                  <CardDescription>
+                    Calculate Body Mass Index with multiple formulas and metric units
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Link href="/calculators/bmi">
+                    <Button className="w-full">Calculate BMI</Button>
+                  </Link>
+                </CardContent>
+              </Card>
+              
+              <Card className="hover:shadow-lg transition-shadow opacity-75">
+                <CardHeader>
+                  <CardTitle className="text-muted-foreground">BSA Calculator</CardTitle>
+                  <CardDescription>
+                    Body Surface Area calculation (Coming Soon)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button variant="secondary" disabled className="w-full">Coming Soon</Button>
+                </CardContent>
+              </Card>
+              
+              <Card className="hover:shadow-lg transition-shadow opacity-75">
+                <CardHeader>
+                  <CardTitle className="text-muted-foreground">Creatinine Clearance</CardTitle>
+                  <CardDescription>
+                    Kidney function assessment (Coming Soon)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button variant="secondary" disabled className="w-full">Coming Soon</Button>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </section>

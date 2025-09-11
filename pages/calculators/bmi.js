@@ -2,6 +2,11 @@ import { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import PrintButton from '../../commons/components/PrintButton';
+import { Button } from '../../components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 
 const BMI_FORMULAS = [
   { key: 'traditional', name: 'Traditional Quetelet Index', description: 'Standard BMI calculation (weight/height²)' },
@@ -84,113 +89,137 @@ export default function BMICalculator() {
       </header>
 
       <main className="main">
-        <div className="container">
-          <section style={{ padding: '3rem 0' }}>
-            <h1 style={{ textAlign: 'center', marginBottom: '2rem' }}>BMI Calculator</h1>
-            
-            <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-              <form onSubmit={calculateBMI}>
-                <div className="form-group">
-                  <label htmlFor="weight">Weight (kg)</label>
-                  <input
-                    type="number"
-                    id="weight"
-                    step="0.1"
-                    min="1.0"
-                    max="1000.0"
-                    placeholder="70.0"
-                    value={weight}
-                    onChange={(e) => setWeight(e.target.value)}
-                    required
-                  />
-                  {errors.weight && (
-                    <div style={{ color: 'var(--danger-color)', fontSize: '0.875rem', marginTop: '0.25rem' }}>
-                      {errors.weight}
-                    </div>
-                  )}
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="height">Height (cm)</label>
-                  <input
-                    type="number"
-                    id="height"
-                    step="0.1"
-                    min="50"
-                    max="300"
-                    placeholder="175.0"
-                    value={height}
-                    onChange={(e) => setHeight(e.target.value)}
-                    required
-                  />
-                  {errors.height && (
-                    <div style={{ color: 'var(--danger-color)', fontSize: '0.875rem', marginTop: '0.25rem' }}>
-                      {errors.height}
-                    </div>
-                  )}
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="formula">BMI Formula</label>
-                  <select
-                    id="formula"
-                    value={formula}
-                    onChange={(e) => setFormula(e.target.value)}
-                  >
-                    {BMI_FORMULAS.map((f) => (
-                      <option key={f.key} value={f.key}>
-                        {f.name}
-                      </option>
-                    ))}
-                  </select>
-                  <div style={{ fontSize: '0.875rem', color: '#666', marginTop: '0.25rem' }}>
-                    {BMI_FORMULAS.find(f => f.key === formula)?.description}
-                  </div>
-                  {errors.formula && (
-                    <div style={{ color: 'var(--danger-color)', fontSize: '0.875rem', marginTop: '0.25rem' }}>
-                      {errors.formula}
-                    </div>
-                  )}
-                </div>
-
-                <button 
-                  type="submit" 
-                  className="btn" 
-                  style={{ width: '100%' }}
-                  disabled={loading}
-                >
-                  {loading ? 'Calculating...' : 'Calculate BMI'}
-                </button>
-              </form>
-
-              {result && (
-                <div className="result-card">
-                  <div className="result-value">
-                    {result.formula.name === 'BMI Prime' ? `BMI Prime: ${result.bmi}` : 
-                     result.formula.name === 'Reciprocal BMI (Ponderal Index)' ? `Ponderal Index: ${result.bmi}` :
-                     `BMI: ${result.bmi}`}
-                    {result.formula.name !== 'BMI Prime' && result.formula.name !== 'Reciprocal BMI (Ponderal Index)' && (
-                      <span style={{ fontSize: '0.6em', color: '#666' }}> kg/m²</span>
+        <div className="container max-w-4xl mx-auto py-12">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold tracking-tight">BMI Calculator</h1>
+            <p className="text-muted-foreground mt-2">
+              Calculate Body Mass Index with multiple formula options
+            </p>
+          </div>
+          
+          <div className="max-w-2xl mx-auto">
+            <Card>
+              <CardHeader>
+                <CardTitle>Enter Your Measurements</CardTitle>
+                <CardDescription>
+                  Provide your weight and height to calculate your BMI using various formulas
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={calculateBMI} className="space-y-6">
+                  <div className="space-y-2">
+                    <Label htmlFor="weight">Weight (kg)</Label>
+                    <Input
+                      type="number"
+                      id="weight"
+                      step="0.1"
+                      min="1.0"
+                      max="1000.0"
+                      placeholder="70.0"
+                      value={weight}
+                      onChange={(e) => setWeight(e.target.value)}
+                      required
+                    />
+                    {errors.weight && (
+                      <div className="text-destructive text-sm">
+                        {errors.weight}
+                      </div>
                     )}
                   </div>
-                  <div 
-                    className="result-category"
-                    style={{ color: getCategoryColor(result.category) }}
-                  >
-                    Category: {result.category}
+
+                  <div className="space-y-2">
+                    <Label htmlFor="height">Height (cm)</Label>
+                    <Input
+                      type="number"
+                      id="height"
+                      step="0.1"
+                      min="50"
+                      max="300"
+                      placeholder="175.0"
+                      value={height}
+                      onChange={(e) => setHeight(e.target.value)}
+                      required
+                    />
+                    {errors.height && (
+                      <div className="text-destructive text-sm">
+                        {errors.height}
+                      </div>
+                    )}
                   </div>
-                  
-                  <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: '#f8f9fa', borderRadius: '4px' }}>
-                    <div style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                      Formula: {result.formula.name}
+
+                  <div className="space-y-2">
+                    <Label htmlFor="formula">BMI Formula</Label>
+                    <Select value={formula} onValueChange={setFormula}>
+                      <SelectTrigger id="formula">
+                        <SelectValue placeholder="Select a BMI formula" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {BMI_FORMULAS.map((f) => (
+                          <SelectItem key={f.key} value={f.key}>
+                            {f.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <div className="text-sm text-muted-foreground">
+                      {BMI_FORMULAS.find(f => f.key === formula)?.description}
                     </div>
-                    <div style={{ fontSize: '0.875rem', color: '#666', marginBottom: '1rem' }}>
-                      {result.formula.description}
+                    {errors.formula && (
+                      <div className="text-destructive text-sm">
+                        {errors.formula}
+                      </div>
+                    )}
+                  </div>
+
+                  <Button 
+                    type="submit" 
+                    className="w-full"
+                    disabled={loading}
+                  >
+                    {loading ? 'Calculating...' : 'Calculate BMI'}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+
+            {result && (
+              <Card className="mt-6">
+                <CardHeader>
+                  <CardTitle className="text-center">
+                    <div className="text-2xl font-bold text-primary">
+                      {result.formula.name === 'BMI Prime' ? `BMI Prime: ${result.bmi}` : 
+                       result.formula.name === 'Reciprocal BMI (Ponderal Index)' ? `Ponderal Index: ${result.bmi}` :
+                       `BMI: ${result.bmi}`}
+                      {result.formula.name !== 'BMI Prime' && result.formula.name !== 'Reciprocal BMI (Ponderal Index)' && (
+                        <span className="text-base text-muted-foreground font-normal"> kg/m²</span>
+                      )}
+                    </div>
+                  </CardTitle>
+                  <CardDescription className="text-center">
+                    <div 
+                      className="text-lg font-semibold"
+                      style={{ color: getCategoryColor(result.category) }}
+                    >
+                      Category: {result.category}
+                    </div>
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="bg-muted rounded-lg p-4 space-y-4">
+                    <div>
+                      <div className="font-semibold mb-2">
+                        Formula: {result.formula.name}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {result.formula.description}
+                      </div>
                     </div>
                     
-                    <div style={{ fontSize: '0.875rem' }}>
-                      <strong>Category Ranges for {result.formula.name}:</strong>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem', marginTop: '0.5rem' }}>
+                    <div>
+                      <div className="text-sm font-semibold mb-2">
+                        Category Ranges for {result.formula.name}:
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-sm">
                         <div><span style={{ color: '#17a2b8' }}>Underweight:</span> {result.interpretation.ranges.underweight}</div>
                         <div><span style={{ color: '#28a745' }}>Normal:</span> {result.interpretation.ranges.normal}</div>
                         <div><span style={{ color: '#ffc107' }}>Overweight:</span> {result.interpretation.ranges.overweight}</div>
@@ -199,11 +228,11 @@ export default function BMICalculator() {
                     </div>
                   </div>
                   
-                  <div style={{ fontSize: '0.875rem', color: '#666', marginTop: '1rem' }}>
+                  <div className="text-sm text-muted-foreground mt-4">
                     Input: {result.input.weight} kg, {result.input.height} cm ({result.input.heightMeters} m)
                   </div>
                   
-                  <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+                  <div className="flex justify-center mt-6">
                     <PrintButton
                       calculatorName="BMI Calculator"
                       result={result}
@@ -219,25 +248,22 @@ export default function BMICalculator() {
                       variant="outline"
                     />
                   </div>
-                </div>
-              )}
+                </CardContent>
+              </Card>
+            )}
               
-              {/* Medical Disclaimer */}
-              <div style={{ 
-                marginTop: '2rem', 
-                padding: '1rem', 
-                backgroundColor: '#fff3cd', 
-                border: '1px solid #ffeaa7', 
-                borderRadius: '4px',
-                fontSize: '0.875rem' 
-              }}>
-                <strong>Medical Disclaimer:</strong> BMI is a screening tool, not a diagnostic tool. 
-                Individual body composition varies significantly. This calculator is for educational 
-                purposes only and should not replace professional medical advice. Consult with 
-                healthcare providers for personalized health assessments.
-              </div>
-            </div>
-          </section>
+            {/* Medical Disclaimer */}
+            <Card className="mt-6 bg-yellow-50 border-yellow-200">
+              <CardContent className="p-4">
+                <div className="text-sm text-yellow-800">
+                  <strong>Medical Disclaimer:</strong> BMI is a screening tool, not a diagnostic tool. 
+                  Individual body composition varies significantly. This calculator is for educational 
+                  purposes only and should not replace professional medical advice. Consult with 
+                  healthcare providers for personalized health assessments.
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </main>
 
