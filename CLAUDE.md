@@ -7,13 +7,13 @@ This file contains Claude-specific commands and development workflows for the Me
 ### Local Development
 ```bash
 # Start development server (standalone, no Vercel CLI needed)
-npm run dev
+pnpm dev
 
 # Alternative start command
-npm start
+pnpm start
 
 # Install dependencies
-npm ci
+pnpm install
 
 # Server automatically starts at http://localhost:3000
 ```
@@ -40,7 +40,7 @@ curl -X POST -H "Content-Type: application/json" \
   -d '{"weight":70,"height":1.75,"unit":"metric"}' \
   https://medi-cal-cyan.vercel.app/api/calculators/bmi
 
-# Test local endpoints (requires npm run dev first)
+# Test local endpoints (requires pnpm dev first)
 curl http://localhost:3000/api/
 curl -X POST -H "Content-Type: application/json" \
   -d '{"weight":70,"height":1.75,"unit":"metric"}' \
@@ -79,7 +79,7 @@ nvm use  # Reads from .nvmrc (Node 22)
 
 # Check versions
 node -v  # Should be 22.x
-npm -v   # Should be 10.x+
+pnpm -v  # Should be 9.x+
 ```
 
 ## 📁 File Structure for Claude
@@ -231,7 +231,7 @@ Before deploying:
 - [ ] Test API endpoints locally
 - [ ] Verify frontend functionality
 - [ ] Check responsive design
-- [ ] Run `npm ci` to ensure clean install
+- [ ] Run `pnpm install` to ensure clean install
 - [ ] Commit changes with proper message
 - [ ] Deploy with `vercel --prod`
 - [ ] Test live endpoints
@@ -275,7 +275,7 @@ curl -X POST \
 ## 🔄 Update Workflow
 
 1. Make changes to code
-2. Test locally if possible: `npm run dev`
+2. Test locally if possible: `pnpm dev`
 3. Commit with proper message format
 4. Push to GitHub: `git push`
 5. **Automatic deployment** to Vercel (triggered by push)
