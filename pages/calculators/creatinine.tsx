@@ -107,29 +107,6 @@ export default function CreatinineCalculator() {
         <meta name="viewport" content={STRINGS.VIEWPORT_META} />
       </Head>
 
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="text-2xl font-bold text-primary">
-              {STRINGS.APP_NAME}
-            </Link>
-            <nav className="flex items-center space-x-6">
-              <Link href="/" className="text-muted-foreground hover:text-foreground transition-colors">
-                {STRINGS.NAV_HOME}
-              </Link>
-              <Link href="/calculators/bmi" className="text-muted-foreground hover:text-foreground transition-colors">
-                {STRINGS.NAV_BMI_CALCULATOR}
-              </Link>
-              <Link href="/calculators/bsa" className="text-muted-foreground hover:text-foreground transition-colors">
-                BSA Calculator
-              </Link>
-              <Link href="/calculators/creatinine" className="text-foreground">
-                Creatinine Calculator
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
 
       <main className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8">

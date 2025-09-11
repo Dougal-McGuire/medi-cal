@@ -13,19 +13,6 @@ export default function Home() {
         <meta name="viewport" content={STRINGS.VIEWPORT_META} />
       </Head>
 
-      <header className="bg-background border-b border-border">
-        <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <h1 className="text-2xl font-bold text-foreground">{STRINGS.APP_NAME}</h1>
-            <nav className="flex space-x-8">
-              <Link href="/" className="text-foreground hover:text-primary transition-colors">{STRINGS.NAV_HOME}</Link>
-              <Link href="/calculators/bmi" className="text-foreground hover:text-primary transition-colors">{STRINGS.NAV_BMI_CALCULATOR}</Link>
-              <Link href="/calculators/bsa" className="text-foreground hover:text-primary transition-colors">BSA Calculator</Link>
-              <Link href="/calculators/creatinine" className="text-foreground hover:text-primary transition-colors">Creatinine Calculator</Link>
-            </nav>
-          </div>
-        </div>
-      </header>
 
       <main className="flex-1">
         <section className="py-20 bg-background">

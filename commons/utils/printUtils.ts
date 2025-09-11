@@ -2,6 +2,8 @@
  * Utility functions for generating printable calculator results
  */
 
+import { STRINGS } from '@/resources/strings';
+
 interface PrintConfig {
   calculatorName: string;
   result: any;
@@ -28,172 +30,25 @@ export function generatePrintableHTML({
     minute: '2-digit'
   });
 
-  const printStyles = `
-    <style>
-      @media print {
-        @page {
-          margin: 1.5cm;
-          size: A4;
+  const tailwindCDN = `<script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'custom-blue': '#0066cc',
+              'custom-gray': '#666',
+              'custom-light-gray': '#f8f9fa',
+              'custom-border': '#ddd'
+            }
+          }
         }
       }
-      
-      body {
-        font-family: Arial, sans-serif;
-        line-height: 1.4;
-        color: #333;
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 10px;
-        font-size: 14px;
-      }
-      
-      .print-header {
-        text-align: center;
-        border-bottom: 2px solid #0066cc;
-        padding-bottom: 12px;
-        margin-bottom: 15px;
-      }
-      
-      .print-header h1 {
-        color: #0066cc;
-        margin: 0;
-        font-size: 24px;
-      }
-      
-      .print-header .subtitle {
-        color: #666;
-        margin: 3px 0;
-        font-size: 14px;
-      }
-      
-      .patient-info {
-        background: #f8f9fa;
-        padding: 10px;
-        border-radius: 5px;
-        margin-bottom: 15px;
-        font-size: 13px;
-      }
-      
-      .patient-info h3 {
-        margin: 0 0 8px 0;
-        color: #0066cc;
-        font-size: 16px;
-      }
-      
-      .result-section {
-        margin-bottom: 15px;
-        text-align: center;
-      }
-      
-      .result-value {
-        font-size: 28px;
-        font-weight: bold;
-        color: #0066cc;
-        margin: 8px 0;
-      }
-      
-      .result-category {
-        font-size: 18px;
-        font-weight: 500;
-        margin: 8px 0;
-      }
-      
-      .category-normal { color: #28a745; }
-      .category-underweight { color: #17a2b8; }
-      .category-overweight { color: #ffc107; }
-      .category-obese { color: #dc3545; }
-      
-      /* CKD Stage colors */
-      .ckd-stage-1, .ckd-stage-2 { color: #28a745; }
-      .ckd-stage-3 { color: #ffc107; }
-      .ckd-stage-4 { color: #fd7e14; }
-      .ckd-stage-5 { color: #dc3545; }
-      
-      /* BSA result info */
-      .result-info {
-        font-size: 16px;
-        color: #6c757d;
-        margin: 8px 0;
-      }
-      
-      .content-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
-        margin-bottom: 15px;
-      }
-      
-      .input-section,
-      .formula-section,
-      .interpretation-section {
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        font-size: 13px;
-      }
-      
-      .section-title {
-        font-weight: bold;
-        color: #0066cc;
-        margin-bottom: 8px;
-        font-size: 14px;
-      }
-      
-      .input-item,
-      .range-item {
-        margin: 3px 0;
-        display: flex;
-        justify-content: space-between;
-        font-size: 12px;
-      }
-      
-      .formula-description {
-        font-style: italic;
-        color: #666;
-        margin-top: 5px;
-        font-size: 12px;
-      }
-      
-      .print-footer {
-        text-align: center;
-        margin-top: 20px;
-        padding-top: 15px;
-        border-top: 1px solid #ddd;
-        color: #666;
-        font-size: 12px;
-      }
-      
-      .ranges-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 5px;
-        margin-top: 8px;
-      }
-      
-      .ranges-grid .range-item {
-        font-size: 11px;
-      }
-      
-      @media (max-width: 600px) {
-        .content-grid {
-          grid-template-columns: 1fr;
-        }
-        
-        .ranges-grid {
-          grid-template-columns: 1fr;
-        }
-        
-        .input-item,
-        .range-item {
-          flex-direction: column;
-        }
-      }
-    </style>
-  `;
+    </script>`;
 
   const patientSection = patientId ? `
-    <div class="patient-info">
-      <h3>Patient Information</h3>
+    <div class="bg-custom-light-gray p-3 rounded-md mb-4 text-sm print:mb-3">
+      <h3 class="m-0 mb-2 text-custom-blue text-base font-semibold">Patient Information</h3>
       <div><strong>Patient ID:</strong> ${escapeHtml(patientId)}</div>
     </div>
   ` : '';
@@ -205,33 +60,32 @@ export function generatePrintableHTML({
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>${calculatorName} Report${patientId ? ' - ' + escapeHtml(patientId) : ''}</title>
-      ${printStyles}
+      ${tailwindCDN}
     </head>
-    <body>
-      <div class="print-header">
-        <h1>MediCal ${calculatorName}</h1>
-        <div class="subtitle">Medical Calculator Report</div>
+    <body class="font-sans leading-normal text-gray-800 max-w-4xl mx-auto p-3 text-sm print:text-xs print:p-6 print:max-w-none">
+      <div class="text-center border-b-2 border-custom-blue pb-3 mb-4 print:pb-2 print:mb-3">
+        <h1 class="text-custom-blue m-0 text-2xl font-bold print:text-xl">MediCal ${calculatorName}</h1>
+        <div class="text-custom-gray my-1 text-sm">Calculator Report</div>
       </div>
       
       ${patientSection}
       
       ${generateResultSection(result, calculatorName)}
       
-      <div class="content-grid">
-        <div class="left-column">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 print:gap-3 print:mb-3">
+        <div>
           ${generateInputSection(inputs)}
           ${generateAdditionalInfoSection(additionalInfo)}
         </div>
-        <div class="right-column">
+        <div>
           ${generateFormulaSection(result.formula)}
           ${generateInterpretationSection(result.interpretation)}
         </div>
       </div>
       
-      <div class="print-footer">
-        <div>Generated by MediCal - Medical Calculator Tools</div>
+      <div class="text-center mt-5 pt-4 border-t border-custom-border text-custom-gray text-xs print:mt-4 print:pt-3">
         <div>Report generated on ${currentDate}</div>
-        <div>&copy; 2025 CCDRD AG</div>
+        <div>${STRINGS.FOOTER_COPYRIGHT}</div>
       </div>
     </body>
     </html>
@@ -250,9 +104,15 @@ function generateResultSection(result: any, calculatorName: string): string {
   
   // Handle BMI Calculator results
   if (result.bmi && result.category) {
-    categoryClass = `category-${result.category.toLowerCase().replace(/\s+/g, '-')}`;
+    const categoryColors = {
+      'normal weight': 'text-green-600',
+      'underweight': 'text-cyan-600', 
+      'overweight': 'text-yellow-600',
+      'obese': 'text-red-600'
+    };
+    categoryClass = categoryColors[result.category.toLowerCase()] || 'text-gray-800';
     resultValue = result.bmi;
-    categoryDisplay = `<div class="result-category ${categoryClass}">Category: ${result.category}</div>`;
+    categoryDisplay = `<div class="text-lg font-medium my-2 ${categoryClass} print:text-base">Category: ${result.category}</div>`;
     
     if (result.formula && result.formula.name) {
       if (result.formula.name.includes('BMI Prime')) {
@@ -270,7 +130,7 @@ function generateResultSection(result: any, calculatorName: string): string {
     resultLabel = 'BSA';
     resultValue = result.bsa;
     resultUnit = ' m²';
-    categoryDisplay = '<div class="result-info">Body Surface Area calculated</div>';
+    categoryDisplay = '<div class="text-base text-gray-600 my-2 print:text-sm">Body Surface Area calculated</div>';
   }
   // Handle Creatinine Calculator results
   else if (result.egfr && result.interpretation && result.interpretation.ckdStage) {
@@ -278,14 +138,18 @@ function generateResultSection(result: any, calculatorName: string): string {
     resultValue = result.egfr;
     resultUnit = ` ${result.units}`;
     const stage = result.interpretation.ckdStage;
-    const stageClass = `ckd-stage-${stage.stage}`;
-    categoryDisplay = `<div class="result-category ${stageClass}">${stage.description}</div>`;
+    const stageColors = {
+      1: 'text-green-600', 2: 'text-green-600', 3: 'text-yellow-600', 
+      4: 'text-orange-500', 5: 'text-red-600'
+    };
+    const stageClass = stageColors[stage.stage] || 'text-gray-800';
+    categoryDisplay = `<div class="text-lg font-medium my-2 ${stageClass} print:text-base">${stage.description}</div>`;
   }
   
   return `
-    <div class="result-section">
-      <div class="section-title">${calculatorName} Results</div>
-      <div class="result-value">${resultLabel}: ${resultValue}${resultUnit}</div>
+    <div class="mb-4 text-center print:mb-3">
+      <div class="font-bold text-custom-blue mb-2 text-sm print:text-xs">${calculatorName} Results</div>
+      <div class="text-3xl font-bold text-custom-blue my-2 print:text-2xl">${resultLabel}: ${resultValue}${resultUnit}</div>
       ${categoryDisplay}
     </div>
   `;
@@ -299,13 +163,13 @@ function generateInputSection(inputs: Record<string, any>): string {
     .map(([key, value]) => {
       const label = formatInputLabel(key);
       const formattedValue = formatInputValue(key, value);
-      return `<div class="input-item"><span>${label}:</span><span>${formattedValue}</span></div>`;
+      return `<div class="my-1 flex justify-between text-xs print:text-xs"><span>${label}:</span><span>${formattedValue}</span></div>`;
     })
     .join('');
 
   return `
-    <div class="input-section">
-      <div class="section-title">Input Values</div>
+    <div class="p-3 border border-custom-border rounded-md text-sm mb-4 print:p-2 print:mb-3">
+      <div class="font-bold text-custom-blue mb-2 text-sm print:text-xs">Input Values</div>
       ${inputItems}
     </div>
   `;
@@ -318,10 +182,10 @@ function generateFormulaSection(formula: any): string {
   if (!formula) return '';
   
   return `
-    <div class="formula-section">
-      <div class="section-title">Formula Information</div>
+    <div class="p-3 border border-custom-border rounded-md text-sm mb-4 print:p-2 print:mb-3">
+      <div class="font-bold text-custom-blue mb-2 text-sm print:text-xs">Formula Information</div>
       <div><strong>Formula:</strong> ${formula.name}</div>
-      <div class="formula-description">${formula.description}</div>
+      <div class="italic text-custom-gray mt-1 text-xs">${formula.description}</div>
     </div>
   `;
 }
@@ -335,14 +199,14 @@ function generateInterpretationSection(interpretation: any): string {
   const rangeItems = Object.entries(interpretation.ranges)
     .map(([category, range]) => {
       const categoryLabel = category.charAt(0).toUpperCase() + category.slice(1);
-      return `<div class="range-item"><span>${categoryLabel}:</span><span>${range}</span></div>`;
+      return `<div class="my-1 flex justify-between text-xs"><span>${categoryLabel}:</span><span>${range}</span></div>`;
     })
     .join('');
 
   return `
-    <div class="interpretation-section">
-      <div class="section-title">Category Ranges</div>
-      <div class="ranges-grid">
+    <div class="p-3 border border-custom-border rounded-md text-sm mb-4 print:p-2 print:mb-3">
+      <div class="font-bold text-custom-blue mb-2 text-sm print:text-xs">Category Ranges</div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-1 mt-2">
         ${rangeItems}
       </div>
     </div>
@@ -359,15 +223,15 @@ function generateAdditionalInfoSection(additionalInfo: Record<string, any>): str
     .filter(([key, value]) => value !== undefined && value !== null && value !== '')
     .map(([key, value]) => {
       const label = formatInputLabel(key);
-      return `<div class="input-item"><span>${label}:</span><span>${value}</span></div>`;
+      return `<div class="my-1 flex justify-between text-xs"><span>${label}:</span><span>${value}</span></div>`;
     })
     .join('');
 
   if (!infoItems) return '';
 
   return `
-    <div class="input-section">
-      <div class="section-title">Additional Information</div>
+    <div class="p-3 border border-custom-border rounded-md text-sm mb-4 print:p-2 print:mb-3">
+      <div class="font-bold text-custom-blue mb-2 text-sm print:text-xs">Additional Information</div>
       ${infoItems}
     </div>
   `;
