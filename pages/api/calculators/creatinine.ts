@@ -38,6 +38,10 @@ interface CreatinineResponse {
   };
 }
 
+interface ValidationErrors {
+  [key: string]: string[] | undefined;
+}
+
 interface ErrorResponse {
   error: string;
   details?: ValidationErrors;
