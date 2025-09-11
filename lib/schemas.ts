@@ -160,37 +160,26 @@ export const CreatinineFormSchema = z.object({
 
 // API input validation for Creatinine calculation
 export const CreatinineApiInputSchema = z.object({
-  age: z
-    .number()
-    .min(18, 'Age must be at least 18 years')
-    .max(120, 'Age must be less than 120 years'),
-  
-  weight: z
-    .number()
-    .min(30, 'Weight must be at least 30 kg')
-    .max(300, 'Weight must be less than 300 kg'),
-  
-  creatinine: z
-    .number()
-    .min(0.001, 'Creatinine value too low')
-    .max(2000, 'Creatinine value too high'),
-  
-  creatinineUnit: z
-    .enum(['mg_dl', 'mmol_l'], { message: 'Invalid creatinine unit' }),
-  
-  sex: z
-    .enum(['male', 'female'], { message: 'Sex is required' }),
-  
-  race: z
-    .enum(['black', 'other'])
-    .optional(),
-  
-  formula: z
-    .string()
-    .refine(
-      (val) => ['ckd_epi_2021', 'ckd_epi_2009', 'mdrd', 'cockcroft_gault'].includes(val),
-      'Invalid formula selection'
-    ),
+  age: z.number().int().min(18, 'Age must be between 18 and 120 years').max(120, 'Age must be between 18 and 120 years'),
+  weight: z.number().min(30, 'Weight must be between 30 and 300 kg').max(300, 'Weight must be between 30 and 300 kg'),
+  creatinine: z.number(),
+  creatinineUnit: z.enum(['mg_dl', 'mmol_l'], { message: 'Invalid creatinine unit' }),
+  sex: z.enum(['male', 'female'], { message: 'Sex is required' }),
+  race: z.enum(['black', 'other']).optional(),
+  formula: z.enum(['ckd_epi_2021', 'ckd_epi_2009', 'mdrd', 'cockcroft_gault'], { message: 'Invalid formula selection' }),
+}).refine((data) => {
+  const { creatinine, creatinineUnit } = data;
+  if (creatinineUnit === 'mg_dl') {
+    return creatinine >= 0.1 && creatinine <= 20.0;
+  }
+  if (creatinineUnit === 'mmol_l') {
+    // Corresponds to ~0.1 to 20.0 mg/dL
+    return creatinine >= 9 && creatinine <= 1770;
+  }
+  return false;
+}, {
+  message: 'Creatinine value is outside the acceptable range for the selected unit.',
+  path: ['creatinine'],
 });
 
 export type CreatinineFormData = z.infer<typeof CreatinineFormSchema>;

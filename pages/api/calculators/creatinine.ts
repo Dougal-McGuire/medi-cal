@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { creatinineConversion } from '@/lib/utils';
+import { CreatinineApiInputSchema } from '@/lib/schemas';
+import { z } from 'zod';
 
 interface FormulaConfig {
   name: string;
@@ -7,12 +9,8 @@ interface FormulaConfig {
   calculate: (age: number, weight: number, creatinine: number, sex: 'male' | 'female', race?: 'black' | 'other') => number;
 }
 
-interface ValidationErrors {
-  [key: string]: string;
-}
-
 interface CKDStage {
-  stage: number;
+  stage: string;
   description: string;
   gfrRange: string;
 }
@@ -45,36 +43,48 @@ interface ErrorResponse {
   details?: ValidationErrors;
 }
 
+const CKD_EPI_CONSTANTS = {
+  FEMALE: { A: 142, B: -0.241, C: 1.012, KAPPA: 0.7 },
+  MALE:   { A: 141, B: -0.302, C: 1,     KAPPA: 0.9 },
+  COMMON: { MAX_EXP: -1.200, AGE_EXP: 0.9938 },
+  RACE_COEFFICIENT: { BLACK: 1.159, OTHER: 1 }
+};
+
 const CREATININE_FORMULAS: Record<string, FormulaConfig> = {
   ckd_epi_2021: {
     name: 'CKD-EPI 2021',
     description: 'Latest recommended formula without race factor (NKF/ASN 2021)',
     calculate: (age, weight, creatinine, sex) => {
-      // CKD-EPI 2021 formula (race-free)
-      const A = sex === 'female' ? 142 : 141;
-      const B = sex === 'female' ? -0.241 : -0.302;
-      const C = sex === 'female' ? 1.012 : 1;
+      const params = sex === 'female' ? CKD_EPI_CONSTANTS.FEMALE : CKD_EPI_CONSTANTS.MALE;
       
-      const minTerm = Math.min(creatinine / (sex === 'female' ? 0.7 : 0.9), 1);
-      const maxTerm = Math.max(creatinine / (sex === 'female' ? 0.7 : 0.9), 1);
+      const scr_div_kappa = creatinine / params.KAPPA;
+      const minTerm = Math.min(scr_div_kappa, 1);
+      const maxTerm = Math.max(scr_div_kappa, 1);
       
-      return A * Math.pow(minTerm, B) * Math.pow(maxTerm, -1.200) * Math.pow(0.9938, age) * C;
+      return params.A *
+             Math.pow(minTerm, params.B) *
+             Math.pow(maxTerm, CKD_EPI_CONSTANTS.COMMON.MAX_EXP) *
+             Math.pow(CKD_EPI_CONSTANTS.COMMON.AGE_EXP, age) *
+             params.C;
     }
   },
   ckd_epi_2009: {
     name: 'CKD-EPI 2009',
     description: 'Previous CKD-EPI formula with race factor (historical)',
     calculate: (age, weight, creatinine, sex, race) => {
-      // CKD-EPI 2009 formula (with race)
-      const A = sex === 'female' ? 142 : 141;
-      const B = sex === 'female' ? -0.241 : -0.302;
-      const C = sex === 'female' ? 1.012 : 1;
-      const D = race === 'black' ? 1.159 : 1;
+      const params = sex === 'female' ? CKD_EPI_CONSTANTS.FEMALE : CKD_EPI_CONSTANTS.MALE;
+      const race_coeff = race === 'black' ? CKD_EPI_CONSTANTS.RACE_COEFFICIENT.BLACK : CKD_EPI_CONSTANTS.RACE_COEFFICIENT.OTHER;
       
-      const minTerm = Math.min(creatinine / (sex === 'female' ? 0.7 : 0.9), 1);
-      const maxTerm = Math.max(creatinine / (sex === 'female' ? 0.7 : 0.9), 1);
+      const scr_div_kappa = creatinine / params.KAPPA;
+      const minTerm = Math.min(scr_div_kappa, 1);
+      const maxTerm = Math.max(scr_div_kappa, 1);
       
-      return A * Math.pow(minTerm, B) * Math.pow(maxTerm, -1.200) * Math.pow(0.9938, age) * C * D;
+      return params.A *
+             Math.pow(minTerm, params.B) *
+             Math.pow(maxTerm, CKD_EPI_CONSTANTS.COMMON.MAX_EXP) *
+             Math.pow(CKD_EPI_CONSTANTS.COMMON.AGE_EXP, age) *
+             params.C *
+             race_coeff;
     }
   },
   mdrd: {
@@ -100,122 +110,79 @@ const CREATININE_FORMULAS: Record<string, FormulaConfig> = {
 
 function getCKDStage(egfr: number, formula: string): CKDStage {
   if (formula === 'cockcroft_gault') {
-    // Cockcroft-Gault doesn't use CKD staging, just provide guidance
-    if (egfr >= 90) return { stage: 1, description: 'Normal or High Function', gfrRange: '≥90 mL/min' };
-    else if (egfr >= 60) return { stage: 2, description: 'Mildly Decreased Function', gfrRange: '60-89 mL/min' };
-    else if (egfr >= 45) return { stage: 3, description: 'Moderately Decreased Function', gfrRange: '45-59 mL/min' };
-    else if (egfr >= 30) return { stage: 3, description: 'Moderately Decreased Function', gfrRange: '30-44 mL/min' };
-    else if (egfr >= 15) return { stage: 4, description: 'Severely Decreased Function', gfrRange: '15-29 mL/min' };
-    else return { stage: 5, description: 'Kidney Failure', gfrRange: '<15 mL/min' };
+    // Cockcroft-Gault provides CrCl, not eGFR. Staging is for guidance.
+    if (egfr >= 90) return { stage: 'N/A', description: 'Normal or High Function', gfrRange: '≥90 mL/min' };
+    if (egfr >= 60) return { stage: 'N/A', description: 'Mildly Decreased Function', gfrRange: '60-89 mL/min' };
+    if (egfr >= 30) return { stage: 'N/A', description: 'Moderately Decreased Function', gfrRange: '30-59 mL/min' };
+    if (egfr >= 15) return { stage: 'N/A', description: 'Severely Decreased Function', gfrRange: '15-29 mL/min' };
+    return { stage: 'N/A', description: 'Kidney Failure', gfrRange: '<15 mL/min' };
   }
 
-  // Standard CKD staging for normalized formulas
-  if (egfr >= 90) return { stage: 1, description: 'Stage 1: Normal or High', gfrRange: '≥90 mL/min/1.73 m²' };
-  else if (egfr >= 60) return { stage: 2, description: 'Stage 2: Mildly Decreased', gfrRange: '60-89 mL/min/1.73 m²' };
-  else if (egfr >= 45) return { stage: 3, description: 'Stage 3a: Moderately Decreased', gfrRange: '45-59 mL/min/1.73 m²' };
-  else if (egfr >= 30) return { stage: 3, description: 'Stage 3b: Moderately Decreased', gfrRange: '30-44 mL/min/1.73 m²' };
-  else if (egfr >= 15) return { stage: 4, description: 'Stage 4: Severely Decreased', gfrRange: '15-29 mL/min/1.73 m²' };
-  else return { stage: 5, description: 'Stage 5: Kidney Failure', gfrRange: '<15 mL/min/1.73 m²' };
+  // Standard CKD staging for eGFR formulas
+  if (egfr >= 90) return { stage: '1', description: 'Stage 1: Normal or High', gfrRange: '≥90 mL/min/1.73 m²' };
+  if (egfr >= 60) return { stage: '2', description: 'Stage 2: Mildly Decreased', gfrRange: '60-89 mL/min/1.73 m²' };
+  if (egfr >= 45) return { stage: '3a', description: 'Stage 3a: Moderately Decreased', gfrRange: '45-59 mL/min/1.73 m²' };
+  if (egfr >= 30) return { stage: '3b', description: 'Stage 3b: Moderately Decreased', gfrRange: '30-44 mL/min/1.73 m²' };
+  if (egfr >= 15) return { stage: '4', description: 'Stage 4: Severely Decreased', gfrRange: '15-29 mL/min/1.73 m²' };
+  return { stage: '5', description: 'Stage 5: Kidney Failure', gfrRange: '<15 mL/min/1.73 m²' };
 }
 
 function getClinicalContext(ckdStage: CKDStage, formula: string): string[] {
   if (formula === 'cockcroft_gault') {
     return [
-      'This formula estimates creatinine clearance (CrCl)',
-      'Primarily used for drug dosing adjustments',
-      'Not normalized to body surface area',
-      'May overestimate kidney function by 10-40%',
-      'Consider eGFR formulas for CKD assessment'
+      'This formula estimates creatinine clearance (CrCl), not eGFR.',
+      'Primarily used for drug dosing adjustments.',
+      'Not normalized to body surface area and may overestimate kidney function.',
+      'Consider using a GFR-based formula like CKD-EPI for CKD staging.'
     ];
   }
 
   switch (ckdStage.stage) {
-    case 1:
+    case '1':
       return [
-        'Normal or high kidney function',
-        'Requires evidence of kidney damage for CKD diagnosis',
-        'Monitor annually if kidney damage present',
-        'Address cardiovascular risk factors'
+        'Normal or high kidney function (in the absence of kidney damage).',
+        'If kidney damage is present (e.g., proteinuria), this indicates CKD Stage 1.',
+        'Monitor annually if risk factors are present.',
+        'Focus on cardiovascular risk reduction.'
       ];
-    case 2:
+    case '2':
       return [
-        'Mildly decreased kidney function',
-        'Monitor annually for progression',
-        'Address cardiovascular risk factors',
-        'Screen for complications of CKD'
+        'Mildly decreased kidney function.',
+        'Indicates CKD Stage 2 if kidney damage is present.',
+        'Monitor annually for progression.',
+        'Address and manage cardiovascular risk factors.'
       ];
-    case 3:
-      if (ckdStage.description.includes('3a')) {
-        return [
-          'Moderately decreased kidney function',
-          'Monitor every 6 months',
-          'Evaluate and treat CKD complications',
-          'Consider cardiovascular risk reduction'
-        ];
-      } else {
-        return [
-          'Moderately decreased kidney function',
-          'Monitor every 3-6 months',
-          'Consider nephrology referral',
-          'Prepare for renal replacement therapy'
-        ];
-      }
-    case 4:
+    case '3a':
       return [
-        'Severely decreased kidney function',
-        'Nephrology referral recommended',
-        'Prepare for dialysis or transplant',
-        'Manage CKD complications actively'
+        'Moderately decreased kidney function.',
+        'Monitor every 6-12 months.',
+        'Evaluate and treat CKD complications (e.g., anemia, bone disease).',
+        'Focus on blood pressure control and cardiovascular health.'
       ];
-    case 5:
+    case '3b':
       return [
-        'Kidney failure',
-        'Urgent nephrology consultation',
-        'Dialysis or transplant indicated',
-        'Manage uremic complications'
+        'Moderately to severely decreased kidney function.',
+        'Monitor every 3-6 months.',
+        'Consider referral to a nephrologist.',
+        'Begin education on renal replacement therapy options.'
+      ];
+    case '4':
+      return [
+        'Severely decreased kidney function.',
+        'Requires nephrology referral.',
+        'Prepare for renal replacement therapy (dialysis, transplant).',
+        'Actively manage complications like anemia and hyperkalemia.'
+      ];
+    case '5':
+      return [
+        'Kidney failure.',
+        'Urgent nephrology consultation required.',
+        'Renal replacement therapy (dialysis or transplant) is indicated.',
+        'Manage uremic symptoms and complications.'
       ];
     default:
-      return ['Consult healthcare provider for interpretation'];
+      return ['Consult a healthcare provider for a detailed interpretation.'];
   }
-}
-
-function validateInput(age: any, weight: any, creatinine: any, creatinineUnit: any, sex: any, race: any, formula: any): ValidationErrors | null {
-  const errors: ValidationErrors = {};
-  
-  if (!age || typeof age !== 'number' || age < 18 || age > 120) {
-    errors.age = 'Must be between 18 and 120 years';
-  }
-  
-  if (!weight || typeof weight !== 'number' || weight < 30 || weight > 300) {
-    errors.weight = 'Must be between 30 and 300 kg';
-  }
-  
-  if (!creatinineUnit || !['mg_dl', 'mmol_l'].includes(creatinineUnit)) {
-    errors.creatinineUnit = 'Invalid creatinine unit';
-  }
-  
-  if (!creatinine || typeof creatinine !== 'number') {
-    errors.creatinine = 'Creatinine must be a number';
-  } else if (creatinineUnit) {
-    const range = creatinineConversion.getValidationRange(creatinineUnit);
-    if (creatinine < range.min || creatinine > range.max) {
-      errors.creatinine = `Must be between ${range.min} and ${range.max} ${range.unit}`;
-    }
-  }
-  
-  if (!sex || !['male', 'female'].includes(sex)) {
-    errors.sex = 'Must be male or female';
-  }
-  
-  if (race && !['black', 'other'].includes(race)) {
-    errors.race = 'Must be black or other';
-  }
-  
-  if (formula && !CREATININE_FORMULAS[formula]) {
-    errors.formula = 'Must be one of: ckd_epi_2021, ckd_epi_2009, mdrd, cockcroft_gault';
-  }
-  
-  return Object.keys(errors).length > 0 ? errors : null;
 }
 
 export default function handler(
@@ -226,18 +193,18 @@ export default function handler(
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { age, weight, creatinine, creatinineUnit = 'mg_dl', sex, race, formula = 'ckd_epi_2021' } = req.body;
+  const parseResult = CreatinineApiInputSchema.safeParse(req.body);
 
-  // Validate input parameters
-  const validationErrors = validateInput(age, weight, creatinine, creatinineUnit, sex, race, formula);
-  if (validationErrors) {
+  if (!parseResult.success) {
     return res.status(400).json({
       error: 'Invalid input parameters',
-      details: validationErrors
+      details: parseResult.error.flatten().fieldErrors,
     });
   }
 
-  // Convert creatinine to mg/dL for calculations (all formulas expect mg/dL)
+  const { age, weight, creatinine, creatinineUnit, sex, race, formula } = parseResult.data;
+
+  // Convert creatinine to mg/dL for calculations
   const creatinineMgDl = creatinineConversion.toMgDl(creatinine, creatinineUnit);
 
   // Get formula configuration

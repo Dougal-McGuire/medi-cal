@@ -93,7 +93,7 @@ export interface CreatinineInput {
 
 export interface CreatinineInterpretation {
   ckdStage: {
-    stage: number;
+    stage: string;
     description: string;
     gfrRange: string;
   };

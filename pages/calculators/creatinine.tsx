@@ -88,15 +88,17 @@ export default function CreatinineCalculator() {
     }
   };
 
-  const getCKDStageColor = (stage: number): string => {
+  const getCKDStageColor = (stage: string): string => {
+    const stageNum = parseInt(stage, 10);
+    if (stage.startsWith('3')) return 'text-yellow-600';
+
     const colors: Record<number, string> = {
       1: 'text-green-600',
       2: 'text-green-600',
-      3: 'text-yellow-600',
       4: 'text-orange-600',
       5: 'text-red-600'
     };
-    return colors[stage] || 'text-foreground';
+    return colors[stageNum] || 'text-foreground';
   };
 
   return (
