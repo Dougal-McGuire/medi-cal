@@ -1,20 +1,21 @@
 import { useState } from 'react';
 import PrintModal from './PrintModal';
 import { generatePrintableHTML, openPrintDialog } from '../utils/printUtils';
-import { Button } from '../../components/ui/button';
+import { Button } from '@/components/ui/button';
 import { Printer } from 'lucide-react';
+
+interface PrintButtonProps {
+  calculatorName: string;
+  result: any;
+  inputs: Record<string, any>;
+  additionalInfo?: Record<string, any>;
+  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
+  disabled?: boolean;
+  className?: string;
+}
 
 /**
  * Reusable Print Button Component
- * 
- * @param {Object} props
- * @param {string} props.calculatorName - Name of the calculator (e.g., "BMI Calculator")
- * @param {Object} props.result - Calculator result object
- * @param {Object} props.inputs - Input values used for calculation
- * @param {Object} props.additionalInfo - Additional information to include in print
- * @param {string} props.variant - Button style variant ('default', 'secondary', 'outline')
- * @param {boolean} props.disabled - Whether the button is disabled
- * @param {string} props.className - Additional CSS classes
  */
 export default function PrintButton({
   calculatorName,
@@ -24,7 +25,7 @@ export default function PrintButton({
   variant = 'outline',
   disabled = false,
   className = ''
-}) {
+}: PrintButtonProps) {
   const [showModal, setShowModal] = useState(false);
 
   const handlePrintClick = () => {
@@ -35,7 +36,7 @@ export default function PrintButton({
     setShowModal(true);
   };
 
-  const handlePrint = (patientId) => {
+  const handlePrint = (patientId: string) => {
     try {
       const printableHTML = generatePrintableHTML({
         calculatorName,
@@ -74,4 +75,3 @@ export default function PrintButton({
     </>
   );
 }
-

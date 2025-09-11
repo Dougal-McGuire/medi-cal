@@ -1,4 +1,46 @@
-const BMI_FORMULAS = {
+import type { NextApiRequest, NextApiResponse } from 'next';
+
+interface FormulaConfig {
+  name: string;
+  description: string;
+  calculate: (weight: number, heightM: number) => number;
+}
+
+interface CategoryRanges {
+  underweight: string;
+  normal: string;
+  overweight: string;
+  obese: string;
+}
+
+interface ValidationErrors {
+  [key: string]: string;
+}
+
+interface BMIResponse {
+  bmi: number;
+  category: string;
+  formula: {
+    name: string;
+    key: string;
+    description: string;
+  };
+  input: {
+    weight: number;
+    height: number;
+    heightMeters: number;
+  };
+  interpretation: {
+    ranges: CategoryRanges;
+  };
+}
+
+interface ErrorResponse {
+  error: string;
+  details?: ValidationErrors;
+}
+
+const BMI_FORMULAS: Record<string, FormulaConfig> = {
   traditional: {
     name: 'Traditional Quetelet Index',
     description: 'Standard BMI calculation (weight/height²)',
@@ -26,7 +68,7 @@ const BMI_FORMULAS = {
   }
 };
 
-function getCategory(bmi, formula) {
+function getCategory(bmi: number, formula: string): string {
   if (formula === 'prime') {
     if (bmi < 0.74) return 'Underweight';
     else if (bmi < 1.0) return 'Normal weight';
@@ -46,7 +88,7 @@ function getCategory(bmi, formula) {
   }
 }
 
-function getCategoryRanges(formula) {
+function getCategoryRanges(formula: string): CategoryRanges {
   if (formula === 'prime') {
     return {
       underweight: '< 0.74',
@@ -71,8 +113,8 @@ function getCategoryRanges(formula) {
   }
 }
 
-function validateInput(weight, height, formula) {
-  const errors = {};
+function validateInput(weight: any, height: any, formula: any): ValidationErrors | null {
+  const errors: ValidationErrors = {};
   
   if (!weight || typeof weight !== 'number' || weight < 1.0 || weight > 1000.0) {
     errors.weight = 'Must be between 1.0 and 1000.0 kg';
@@ -89,7 +131,10 @@ function validateInput(weight, height, formula) {
   return Object.keys(errors).length > 0 ? errors : null;
 }
 
-export default function handler(req, res) {
+export default function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<BMIResponse | ErrorResponse>
+) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }

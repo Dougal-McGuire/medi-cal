@@ -6,17 +6,24 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "../../components/ui/dialog";
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
-export default function PrintModal({ isOpen, onClose, onPrint, calculatorName }) {
+interface PrintModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onPrint: (patientId: string) => void;
+  calculatorName: string;
+}
+
+export default function PrintModal({ isOpen, onClose, onPrint, calculatorName }: PrintModalProps) {
   const [patientId, setPatientId] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onPrint(patientId.trim() || null);
+    onPrint(patientId.trim() || '');
     setPatientId('');
     onClose();
   };

@@ -1,6 +1,7 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  // Enable Turbopack for development (new config format)
+import type { NextConfig } from 'next';
+
+const nextConfig: NextConfig = {
+  // Enable Turbopack for development
   turbopack: {
     // Turbopack configuration
   },

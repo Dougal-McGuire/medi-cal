@@ -2,15 +2,16 @@
  * Utility functions for generating printable calculator results
  */
 
+interface PrintConfig {
+  calculatorName: string;
+  result: any;
+  inputs: Record<string, any>;
+  patientId?: string | null;
+  additionalInfo?: Record<string, any>;
+}
+
 /**
  * Generate a printable HTML document for calculator results
- * @param {Object} config - Configuration object
- * @param {string} config.calculatorName - Name of the calculator
- * @param {Object} config.result - Calculator result object
- * @param {Object} config.inputs - Input values used for calculation
- * @param {string|null} config.patientId - Optional patient identifier
- * @param {Object} config.additionalInfo - Additional information to display
- * @returns {string} HTML string for printing
  */
 export function generatePrintableHTML({
   calculatorName,
@@ -18,7 +19,7 @@ export function generatePrintableHTML({
   inputs,
   patientId = null,
   additionalInfo = {}
-}) {
+}: PrintConfig): string {
   const currentDate = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -227,7 +228,7 @@ export function generatePrintableHTML({
 /**
  * Generate the result section HTML
  */
-function generateResultSection(result, calculatorName) {
+function generateResultSection(result: any, calculatorName: string): string {
   const categoryClass = `category-${result.category.toLowerCase().replace(/\s+/g, '-')}`;
   
   let resultLabel = 'Result';
@@ -258,7 +259,7 @@ function generateResultSection(result, calculatorName) {
 /**
  * Generate the input section HTML
  */
-function generateInputSection(inputs) {
+function generateInputSection(inputs: Record<string, any>): string {
   const inputItems = Object.entries(inputs)
     .map(([key, value]) => {
       const label = formatInputLabel(key);
@@ -278,7 +279,7 @@ function generateInputSection(inputs) {
 /**
  * Generate the formula section HTML
  */
-function generateFormulaSection(formula) {
+function generateFormulaSection(formula: any): string {
   if (!formula) return '';
   
   return `
@@ -293,7 +294,7 @@ function generateFormulaSection(formula) {
 /**
  * Generate the interpretation section HTML
  */
-function generateInterpretationSection(interpretation) {
+function generateInterpretationSection(interpretation: any): string {
   if (!interpretation || !interpretation.ranges) return '';
   
   const rangeItems = Object.entries(interpretation.ranges)
@@ -316,7 +317,7 @@ function generateInterpretationSection(interpretation) {
 /**
  * Generate additional information section HTML
  */
-function generateAdditionalInfoSection(additionalInfo) {
+function generateAdditionalInfoSection(additionalInfo: Record<string, any>): string {
   if (!additionalInfo || Object.keys(additionalInfo).length === 0) return '';
   
   const infoItems = Object.entries(additionalInfo)
@@ -340,8 +341,8 @@ function generateAdditionalInfoSection(additionalInfo) {
 /**
  * Format input labels for display
  */
-function formatInputLabel(key) {
-  const labelMap = {
+function formatInputLabel(key: string): string {
+  const labelMap: Record<string, string> = {
     weight: 'Weight',
     height: 'Height',
     heightMeters: 'Height (meters)',
@@ -357,8 +358,8 @@ function formatInputLabel(key) {
 /**
  * Format input values for display
  */
-function formatInputValue(key, value) {
-  const unitMap = {
+function formatInputValue(key: string, value: any): string {
+  const unitMap: Record<string, string> = {
     weight: ' kg',
     height: ' cm',
     heightMeters: ' m'
@@ -374,17 +375,26 @@ function formatInputValue(key, value) {
 /**
  * Escape HTML characters to prevent XSS
  */
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
+function escapeHtml(text: string): string {
+  if (typeof document !== 'undefined') {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+  
+  // Fallback for server-side rendering
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 /**
  * Open the print dialog with the generated HTML
- * @param {string} htmlContent - HTML content to print
  */
-export function openPrintDialog(htmlContent) {
+export function openPrintDialog(htmlContent: string): void {
   const printWindow = window.open('', '_blank');
   
   if (!printWindow) {
